@@ -36,7 +36,7 @@
 
 # Importing the libraries
 import csv
-
+from dataOperations import DataOperations
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -48,7 +48,7 @@ movies = []
 for i in range(0,45):
 
     movies.append([str(dataset.values[i, j]) for j in range(0,20)])
-print(movies)
+#print(movies)
 # Training the Apriori model on the dataset
 from apyori import apriori
 
@@ -72,8 +72,9 @@ def inspect(results):
     supports = [result[1] for result in results]
     confidences = [result[2][0][2] for result in results]
     lifts = [result[2][0][3] for result in results]
-    return list(zip(lhs, rhs, supports, confidences, lifts))
 
+    return list(zip(lhs, rhs, supports, confidences, lifts))
+    #DataOperations.insert(lhs, rhs, supports, confidences, lifts)
 
 resultsinDataFrame = pd.DataFrame(inspect(results),
                                   columns=['Book1', 'Book2', 'Support', 'Confidence', 'Lift'])
@@ -85,3 +86,5 @@ resultsinDataFrame = pd.DataFrame(inspect(results),
 ## Displaying the results sorted by descending lifts
 resultsinDataFrame.nlargest(n=20, columns='Lift')
 print(resultsinDataFrame)
+for ind in resultsinDataFrame.index:
+    DataOperations.insert(resultsinDataFrame['Book1'][ind],resultsinDataFrame['Book2'][ind],round(resultsinDataFrame['Support'][ind],2), round(resultsinDataFrame['Confidence'][ind],2), round(resultsinDataFrame['Lift'][ind],2))
